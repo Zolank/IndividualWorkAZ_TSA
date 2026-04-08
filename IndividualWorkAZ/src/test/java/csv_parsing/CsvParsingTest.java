@@ -18,7 +18,7 @@ public class CsvParsingTest {
         csvFilePath = Paths.get("src/main/resources/students_opencsv.csv");
         Assert.assertTrue(Files.exists(csvFilePath), "CSV файл для тестов не найден!");
     }
-
+//Smoke
     @Test
     public void testReadUsingSplit() {
         CsvReaderService.readUsingSplit(csvFilePath);
@@ -38,7 +38,7 @@ public class CsvParsingTest {
     public void testReadUsingApacheCommons() {
         CsvReaderService.readUsingApacheCommons(csvFilePath);
     }
-
+//Unit
     @Test
     public void testStudentModel() {
         Student student = new Student(1, "Тест", 20, 95.5);

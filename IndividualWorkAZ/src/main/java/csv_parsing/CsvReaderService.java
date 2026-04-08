@@ -20,17 +20,9 @@ import java.util.stream.Stream;
  */
 public class CsvReaderService {
 
-    /**
-     * Вспомогательный метод для вывода результатов и подсчета статистики.
-     *
-     * @param methodName название метода чтения
-     * @param students   список распарсенных студентов
-     */
     private static void printStats(String methodName, List<Student> students) {
         System.out.println("=== Чтение с помощью: " + methodName + " ===");
-
         students.forEach(System.out::println);
-
         System.out.println("Количество записей: " + students.size());
 
         double averageGrade = students.stream()
@@ -44,11 +36,12 @@ public class CsvReaderService {
      * 1. Чтение с использованием String.split()
      */
     public static void readUsingSplit(Path filePath) {
+        // REFACTORING: Использован try-with-resources для автоматического закрытия Stream.
+        // REFACTORING: Явно указана кодировка StandardCharsets.UTF_8.
         try (Stream<String> lines = Files.lines(filePath, StandardCharsets.UTF_8)) {
-            List<Student> students = lines.skip(1) // Пропускаем строку с заголовками
+            List<Student> students = lines.skip(1)
                     .map(line -> {
                         String[] parts = line.split(",");
-                        // Очищаем каждый элемент от кавычек и лишних пробелов
                         for (int i = 0; i < parts.length; i++) {
                             parts[i] = parts[i].replace("\"", "").trim();
                         }
@@ -68,16 +61,16 @@ public class CsvReaderService {
     /**
      * 2. Чтение с использованием Scanner
      */
-
     public static void readUsingScanner(Path filePath) {
         List<Student> students = new ArrayList<>();
+        // REFACTORING: Использован try-with-resources для автоматического закрытия Scanner.
+        // REFACTORING: Явно указана кодировка StandardCharsets.UTF_8.
         try (Scanner scanner = new Scanner(filePath, StandardCharsets.UTF_8)) {
             if (scanner.hasNextLine()) {
-                scanner.nextLine(); // Пропускаем строку с заголовками
+                scanner.nextLine();
             }
             while (scanner.hasNextLine()) {
                 String[] parts = scanner.nextLine().split(",");
-                // Очищаем каждый элемент от кавычек и лишних пробелов
                 for (int i = 0; i < parts.length; i++) {
                     parts[i] = parts[i].replace("\"", "").trim();
                 }
@@ -99,6 +92,8 @@ public class CsvReaderService {
      */
     public static void readUsingOpenCsv(Path filePath) {
         List<Student> students = new ArrayList<>();
+        // REFACTORING: Использован try-with-resources для BufferedReader и CSVReader.
+        // REFACTORING: Явно указана кодировка StandardCharsets.UTF_8.
         try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
              CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build()) {
 
@@ -128,11 +123,12 @@ public class CsvReaderService {
                 .setSkipHeaderRecord(true)
                 .build();
 
+        // REFACTORING: Использован try-with-resources для автоматического закрытия парсера.
+        // REFACTORING: Явно указана кодировка StandardCharsets.UTF_8.
         try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
              CSVParser parser = new CSVParser(reader, format)) {
 
             for (CSVRecord record : parser) {
-
                 students.add(new Student(
                         Integer.parseInt(record.get("id")),
                         record.get("name"),

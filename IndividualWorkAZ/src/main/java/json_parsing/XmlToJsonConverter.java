@@ -30,6 +30,9 @@ public class XmlToJsonConverter {
      */
     @SuppressWarnings("unchecked")
     public static void convert(Path xmlFilePath) {
+
+        // REFACTORING: Заменен старый FileInputStream на современный NIO.2 API (Files.newInputStream).
+        // REFACTORING: Использован try-with-resources для автоматического закрытия InputStream.
         try (InputStream is = Files.newInputStream(xmlFilePath)) {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

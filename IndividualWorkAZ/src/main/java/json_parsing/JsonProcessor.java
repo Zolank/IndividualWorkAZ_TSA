@@ -27,9 +27,12 @@ public class JsonProcessor {
      *
      * @param filePath путь к JSON файлу
      */
-    @SuppressWarnings("unchecked") // Подавляем предупреждения библиотеки json-simple
+    @SuppressWarnings("unchecked")
     public static void processAndModifyJson(Path filePath) {
         JSONParser parser = new JSONParser();
+
+        // REFACTORING: Использован try-with-resources для безопасной работы с Reader.
+        // REFACTORING: Использован современный NIO.2 API (Files.newBufferedReader) с кодировкой UTF_8.
         try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             JSONArray jsonArray = (JSONArray) parser.parse(reader);
             List<Student> students = new ArrayList<>();
@@ -48,7 +51,7 @@ public class JsonProcessor {
             System.out.println("\n=== JSON: Исходные данные ===");
             students.forEach(System.out::println);
 
-            // New sdudent
+            // New student
             JSONObject newStudent = new JSONObject();
             newStudent.put("id", 6);
             newStudent.put("name", "Елена Васильева");
@@ -57,7 +60,7 @@ public class JsonProcessor {
             jsonArray.add(newStudent);
             LOGGER.info("JSON: Добавлен новый студент (Елена Васильева).");
 
-            // Change sdudent
+            // Change student
             for (Object obj : jsonArray) {
                 JSONObject jsonObj = (JSONObject) obj;
                 if (((Number) jsonObj.get("id")).intValue() == 1) {
@@ -67,6 +70,8 @@ public class JsonProcessor {
                 }
             }
 
+            // REFACTORING: Использован try-with-resources для безопасной работы с Writer.
+            // REFACTORING: Использован современный NIO.2 API (Files.newBufferedWriter) с кодировкой UTF_8.
             try (Writer writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
                 writer.write(jsonArray.toJSONString());
                 LOGGER.info("JSON: Обновленный файл успешно сохранен.");
